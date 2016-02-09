@@ -1,7 +1,8 @@
 {
   "presets": [
     "es2015",
-    "react"
+    "react",
+    "survivejs-kanban"
   ],
   "plugins": [
     "syntax-class-properties",

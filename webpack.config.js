@@ -2,6 +2,8 @@ const path = require('path');
 const HtmlwebpackPlugin = require('html-webpack-plugin');
 const merge = require('webpack-merge');
 const webpack = require('webpack');
+const NpmInstallPlugin = require('npm-install-webpack-plugin');
+
 var stylelint = require('stylelint');
 var configSuitcss = require('stylelint-config-suitcss');
 
@@ -83,7 +85,10 @@ if(TARGET === 'start' || !TARGET) {
       port: process.env.PORT
     },
     plugins: [
-      new webpack.HotModuleReplacementPlugin()
+      new webpack.HotModuleReplacementPlugin(),
+      new NpmInstallPlugin({
+        save: true
+      })
     ]
   });
 }
