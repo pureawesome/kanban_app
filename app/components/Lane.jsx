@@ -7,7 +7,7 @@ import NoteStore from '../stores/NoteStore';
 
 import LaneActions from '../actions/LaneActions';
 
-import Editable from './Editable .jsx';
+import Editable from './Editable.jsx';
 
 export default class Lane extends React.Component {
   render() {
@@ -33,13 +33,19 @@ export default class Lane extends React.Component {
             notes: () => NoteStore.getNotesByIds(lane.notes)
           }}
         >
-          <Notes onEdit={this.editNote} onDelete={this.deleteNote} />
+          <Notes
+            onValueClick={this.activateNoteEdit}
+            onEdit={this.editNote}
+            onDelete={this.deleteNote} />
         </AltContainer>
       </div>
     );
   }
 
   addNote = (e) => {
+    e.stopPropagation();
+    console.log('add note');
+
     const laneId = this.props.lane.id;
     const note = NoteActions.create({task: 'New Task'});
 
@@ -49,8 +55,40 @@ export default class Lane extends React.Component {
     });
   };
 
+  editName = (name) => {
+    const laneId = this.props.lane.id;
+
+    if(!name.trim()) {
+      LaneActions.update({id: laneId, editing: false});
+      return;
+    }
+    LaneActions.update({id: laneId, name, editing: false});
+  };
+
+  deleteLane = () => {
+    const laneId = this.props.lane.id;
+
+    LaneActions.delete(laneId);
+  };
+
+  activateLaneEdit = () => {
+    const laneId = this.props.lane.id;
+
+    LaneActions.update({id: laneId, editing: true});
+  };
+
+  activateNoteEdit(id) {
+    console.log('activate edit');
+    NoteActions.update({id, editing: true});
+  }
+
   editNote(id, task) {
-    NoteActions.update({id, task});
+    console.log('editNote');
+    if(!task.trim()) {
+      NoteActions.update({id, editing: false});
+      return;
+    }
+    NoteActions.update({id, task, editing: false});
   }
 
   deleteNote = (noteId, e) => {
@@ -58,7 +96,7 @@ export default class Lane extends React.Component {
 
     const laneId = this.props.lane.id;
 
-    laneActions.detachFromLane({laneId, noteId});
+    LaneActions.detachFromLane({laneId, noteId});
     NoteActions.delete(noteId);
   };
 }

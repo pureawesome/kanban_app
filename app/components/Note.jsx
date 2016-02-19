@@ -43,6 +43,12 @@ export default class Note extends React.Component {
     );
   };
 
+  renderDelete = () => {
+    return <button
+      className="delete-note"
+      onClick={this.props.onDelete}>x</button>;
+  };
+
   edit = () => {
     this.setState({
       editing: true
@@ -67,7 +73,4 @@ export default class Note extends React.Component {
     }
   };
 
-  renderDelete = () => {
-    return <button className="delete-note" onClick={this.props.onDelete}>x</button>;
-  };
 }
