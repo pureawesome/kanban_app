@@ -29,7 +29,23 @@ class LaneStore {
       return lane;
     });
     this.setState({lanes});
-    console.log({lanes});
+  }
+
+  move({sourceId, targetId})  {
+    let lanes = this.lanes;
+
+    const sourceLane = lanes.filter(lane => lane.id.includes(sourceId))[0];
+    const targetLane = lanes.filter(lane => lane.id.includes(targetId))[0];
+    const sourceLaneIndex = lanes.indexOf(sourceLane);
+    const targetLaneIndex = lanes.indexOf(targetLane);
+
+    lanes = update(lanes, {
+      $splice: [
+        [sourceLaneIndex, 1],
+        [targetLaneIndex, 0, sourceLane]
+      ]
+    });
+    this.setState({lanes});
   }
 
   delete(id) {
@@ -41,7 +57,6 @@ class LaneStore {
   attachToLane({laneId, noteId}) {
     const lanes = this.lanes.map(lane => {
       if(lane.notes.includes(noteId)) {
-        // console.log(lane);
         lane.notes = lane.notes.filter(note => note !== noteId);
       }
 
@@ -71,13 +86,12 @@ class LaneStore {
     this.setState({lanes});
   }
 
-  move({sourceId, targetId}) {
+  moveNote({sourceId, targetId}) {
     const lanes = this.lanes;
     const sourceLane = lanes.filter(lane => lane.notes.includes(sourceId))[0];
     const targetLane = lanes.filter(lane => lane.notes.includes(targetId))[0];
     const sourceNoteIndex = sourceLane.notes.indexOf(sourceId);
     const targetNoteIndex = targetLane.notes.indexOf(targetId);
-
     if(sourceLane === targetLane) {
       sourceLane.notes = update(sourceLane.notes, {
         $splice: [

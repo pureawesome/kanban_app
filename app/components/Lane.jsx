@@ -9,8 +9,31 @@ import LaneActions from '../actions/LaneActions';
 
 import Editable from './Editable.jsx';
 
-import {DropTarget} from 'react-dnd';
+import {DragSource, DropTarget} from 'react-dnd';
 import ItemTypes from '../constants/itemTypes';
+
+const laneSource = {
+  beginDrag(props) {
+    return {
+      id: props.lane.id
+    };
+  },
+  isDragging(props, monitor) {
+    return props.lane.id === monitor.getItem().id;
+  }
+}
+
+const laneTarget = {
+  hover(targetProps, monitor) {
+    const targetId = targetProps.lane.id;
+    const sourceProps = monitor.getItem();
+    const sourceId = sourceProps.id;
+
+    if(sourceId !== targetId) {
+      targetProps.onMove({sourceId, targetId});
+    }
+  }
+}
 
 const noteTarget = {
   hover(targetProps, monitor) {
@@ -27,16 +50,25 @@ const noteTarget = {
   }
 };
 
-@DropTarget(ItemTypes.NOTE, noteTarget, (connect) => ({
+@DragSource(ItemTypes.LANE, laneSource, (connect, monitor) => ({
+  connectDragSource: connect.dragSource(),
+  isDragging: monitor.isDragging()
+}))
+
+@DropTarget(ItemTypes.LANE, laneTarget, (connect) => ({
   connectDropTarget: connect.dropTarget()
 }))
 
+// @DropTarget(ItemTypes.NOTE, noteTarget, (connect) => ({
+//   connectDropTarget: connect.dropTarget()
+// }))
+
 export default class Lane extends React.Component {
   render() {
-    const {connectDropTarget, lane, ...props} = this.props;
+    const {connectDragSource, connectDropTarget, isDragging, lane, id, ...props} = this.props;
 
-    return connectDropTarget(
-      <div {...props}>
+    return connectDragSource(connectDropTarget(
+      <li {...props} style={{opacity: isDragging ? 0 : 1}}>
         <div className="lane-header" onClick={this.activateLaneEdit}>
           <div className="lane-add-note">
             <button onClick={this.addNote}>+ Note</button>
@@ -60,13 +92,12 @@ export default class Lane extends React.Component {
             onEdit={this.editNote}
             onDelete={this.deleteNote} />
         </AltContainer>
-      </div>
-    );
+      </li>
+    ));
   }
 
   addNote = (e) => {
     e.stopPropagation();
-    console.log('add note');
 
     const laneId = this.props.lane.id;
     const note = NoteActions.create({task: 'New Task'});
@@ -100,12 +131,10 @@ export default class Lane extends React.Component {
   };
 
   activateNoteEdit(id) {
-    console.log('activate edit');
     NoteActions.update({id, editing: true});
   }
 
   editNote(id, task) {
-    console.log('editNote');
     if(!task.trim()) {
       NoteActions.update({id, editing: false});
       return;

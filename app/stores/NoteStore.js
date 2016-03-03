@@ -33,7 +33,6 @@ class NoteStore {
       return note;
     });
     this.setState({notes});
-    console.log({notes});
   }
 
   delete(id) {

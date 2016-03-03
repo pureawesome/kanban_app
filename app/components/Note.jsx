@@ -4,8 +4,6 @@ import ItemTypes from '../constants/itemTypes';
 
 const noteSource = {
   beginDrag(props) {
-    // console.log('begin dragging note', props);
-
     return {
       id: props.id
     };
@@ -24,8 +22,6 @@ const noteTarget = {
     if(sourceId !== targetId) {
       targetProps.onMove({sourceId, targetId});
     }
-
-    // console.log('dragging note', sourceProps.id, targetProps.id);
   }
 };
 
