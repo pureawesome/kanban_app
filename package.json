@@ -6,7 +6,9 @@
   "scripts": {
     "build": "webpack",
     "start": "webpack-dev-server",
-    "lint": "eslint . --ext .js --ext .jsx"
+    "lint": "eslint . --ext .js --ext .jsx",
+    "stats": "webpack --profile --json > stats.json",
+    "deploy": "gh-pages -d build"
   },
   "keywords": [
     "webpack",
@@ -28,12 +30,15 @@
     "babel-preset-react": "^6.3.13",
     "babel-preset-react-hmre": "^1.0.1",
     "babel-preset-survivejs-kanban": "^0.3.3",
+    "clean-webpack-plugin": "^0.1.8",
     "css-loader": "^0.23.1",
     "eslint": "^1.10.3",
     "eslint-loader": "^1.2.0",
     "eslint-plugin-react": "^3.14.0",
-    "html-webpack-plugin": "^1.7.0",
-    "html-webpack-template": "^2.5.1",
+    "extract-text-webpack-plugin": "^1.0.1",
+    "gh-pages": "^0.11.0",
+    "html-webpack-plugin": "^2.15.0",
+    "html-webpack-template": "^4.0.0",
     "npm-install-webpack-plugin": "^2.0.2",
     "postcss-loader": "^0.8.0",
     "style-loader": "^0.13.0",
